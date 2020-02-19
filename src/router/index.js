@@ -5,18 +5,18 @@ import {
     Route,
     Redirect
 } from "react-router-dom";
-import Login from '../component/login';
-import Profile from '../component/profile';
-import SignUp from '../component/signUp';
+// import Login from '../component/login';
+// import Profile from '../component/profile';
+// import SignUp from '../component/signUp';
 import Sidenav from '../component/sidenav';
 function AppRouter (props){
     return(
         <Router>
             <Switch>
                 <Redirect exact path="/" to='/login'/>
-                <Route exact component={Profile} path='/profile' />
-                <Route exact component={Login} path='/login' />
-                <Route exact component={SignUp} path='/sign_up' />
+                <Route exact component={Sidenav} path='/profile' />
+                <Route exact component={Sidenav} path='/login' />
+                <Route exact component={Sidenav} path='/sign_up' />
                 <Route exact component= {Sidenav} path='/sidenav'/>
             </Switch>
         </Router>

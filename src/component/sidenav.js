@@ -1,49 +1,83 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {withRouter } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-// import { Button } from '@material-ui/core';
-import List from '@material-ui/core/List';
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
 // import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+// import InboxIcon from '@material-ui/icons/MoveToInbox';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 // import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-// import InboxIcon from '@material-ui/icons/MoveToInbox';
 // import MailIcon from '@material-ui/icons/Mail';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Login from './login';
+import Profile from './profile';
+import SignUp from './signUp'
+const drawerWidth = 240;
 
-const useStyles = makeStyles({
-  list: {
-    width: 250,
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
   },
-  fullList: {
-    width: 'auto',
+  drawer: {
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
   },
-});
+  appBar: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
+}));
 
- function Sidenav(props) {
+function Sidenav(props) {
+  const { container } = props;
   const classes = useStyles();
-  const [state, setState] = React.useState({
-    top: false,
-    left: true,
-    bottom: false,
-    right: false,
-  });
+  const theme = useTheme();
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-//   const toggleDrawer = (side, open) => event => {
-//     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-//       return;
-//     }
-
-//     setState({ ...state, [side]: open });
-//   };
-
-  const sideList = side => (
-    <div
-      className={classes.list}
-      role="presentation"
-    //   onClick={toggleDrawer(side, false)}
-    //   onKeyDown={toggleDrawer(side, false)}
-    >
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+//   useEffect(()=>{
+//       displayComponent();
+//   })
+  function displayComponent(){
+      if(props.match.path==='/login'){
+          return <Login />
+      }else if (props.match.path==='/profile'){
+          return <Profile />
+      }else if(props.match.path==='/sign_up'){
+          return <SignUp />
+      }
+  }
+  const drawer = (
+    <div>
+      <div className={classes.toolbar} />
       <List>
           <ListItem button onClick={()=>props.history.push('/profile')}>
             <ListItemText primary="profile" />
@@ -57,30 +91,71 @@ const useStyles = makeStyles({
     </div>
   );
 
-
   return (
-    <div>
-      <Drawer open={state.left} >
-        {sideList('left')}
-      </Drawer>
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            className={classes.menuButton}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap>
+            Responsive drawer
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <nav className={classes.drawer} aria-label="mailbox folders">
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Hidden smUp implementation="css">
+          <Drawer
+            container={container}
+            variant="temporary"
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown implementation="css">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+      </nav>
+      <main className={classes.content}>
+      <div className={classes.toolbar} />
+      {displayComponent()}
+      </main>
     </div>
   );
 }
 
+Sidenav.propTypes = {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  container: PropTypes.any,
+};
+
 
 export default withRouter(Sidenav)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
